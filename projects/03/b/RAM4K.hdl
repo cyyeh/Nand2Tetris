@@ -15,5 +15,22 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    DMux8Way(in=true, sel=address[9..11], a=RAM512Zero, b=RAM512One, c=RAM512Two, d=RAM512Three, e=RAM512Four, f=RAM512Five, g=RAM512Six, h=RAM512Seven);
+    Mux16(a=RAM512ZeroOut, b=in, sel=RAM512Zero, out=RAM512ZeroIn);
+    Mux16(a=RAM512OneOut, b=in, sel=RAM512One, out=RAM512OneIn);
+    Mux16(a=RAM512TwoOut, b=in, sel=RAM512Two, out=RAM512TwoIn);
+    Mux16(a=RAM512ThreeOut, b=in, sel=RAM512Three, out=RAM512ThreeIn);
+    Mux16(a=RAM512FourOut, b=in, sel=RAM512Four, out=RAM512FourIn);
+    Mux16(a=RAM512FiveOut, b=in, sel=RAM512Five, out=RAM512FiveIn);
+    Mux16(a=RAM512SixOut, b=in, sel=RAM512Six, out=RAM512SixIn);
+    Mux16(a=RAM512SevenOut, b=in, sel=RAM512Seven, out=RAM512SevenIn);
+    RAM512(in=RAM512ZeroIn, load=load, address=address[0..8], out=RAM512ZeroOut);
+    RAM512(in=RAM512OneIn, load=load, address=address[0..8], out=RAM512OneOut);
+    RAM512(in=RAM512TwoIn, load=load, address=address[0..8], out=RAM512TwoOut);
+    RAM512(in=RAM512ThreeIn, load=load, address=address[0..8], out=RAM512ThreeOut);
+    RAM512(in=RAM512FourIn, load=load, address=address[0..8], out=RAM512FourOut);
+    RAM512(in=RAM512FiveIn, load=load, address=address[0..8], out=RAM512FiveOut);
+    RAM512(in=RAM512SixIn, load=load, address=address[0..8], out=RAM512SixOut);
+    RAM512(in=RAM512SevenIn, load=load, address=address[0..8], out=RAM512SevenOut);
+    Mux8Way16(a=RAM512ZeroOut, b=RAM512OneOut, c=RAM512TwoOut, d=RAM512ThreeOut, e=RAM512FourOut, f=RAM512FiveOut, g=RAM512SixOut, h=RAM512SevenOut, sel=address[9..11], out=out);    
 }
