@@ -27,7 +27,7 @@ def readAssemblyFile(file, updateSymbolTable):
 
 # initialize c-type instruction table
 def initializeCInstructionTable():
-    cInstuctionTable = {
+    cInstructionTable = {
         "comp": {
             '0': '0101010',
             '1': '0111111',
@@ -80,7 +80,7 @@ def initializeCInstructionTable():
         }
     }
 
-    return cInstuctionTable
+    return cInstructionTable
 
 # initialize symbol table
 def initializeSymbolTable():
@@ -151,17 +151,17 @@ def transferHackAssemblyToBinaryCode(assemblyProgramList):
 
             if '=' in assembly and ';' not in assembly:
                 dest, comp = assembly.split('=')
-                destBits = cInstuctionTable["dest"][dest]
-                compBits = cInstuctionTable["comp"][comp]
+                destBits = cInstructionTable["dest"][dest]
+                compBits = cInstructionTable["comp"][comp]
             elif '=' in assembly and ';' in assembly:
                 dest, comp, jump = re.split('=|;', assembly)
-                destBits = cInstuctionTable["dest"][dest]
-                compBits = cInstuctionTable["comp"][comp]
-                jumpBits = cInstuctionTable["jump"][jump]
+                destBits = cInstructionTable["dest"][dest]
+                compBits = cInstructionTable["comp"][comp]
+                jumpBits = cInstructionTable["jump"][jump]
             elif ';' in assembly:
                 comp, jump = assembly.split(';')
-                jumpBits = cInstuctionTable["jump"][jump]
-                compBits = cInstuctionTable["comp"][comp]
+                jumpBits = cInstructionTable["jump"][jump]
+                compBits = cInstructionTable["comp"][comp]
             binaryProgramList.append(firstThreeBits + compBits + destBits + jumpBits)
 
     return binaryProgramList
@@ -177,7 +177,7 @@ def writeBinaryProgramToFile(fileName, binaryProgramList):
 USER_DEFIEND_SYMBOL_INIT = "INIT"
 
 # initialize c-type instruction table
-cInstuctionTable = initializeCInstructionTable()
+cInstructionTable = initializeCInstructionTable()
 
 # initialize symbol table
 symbolTable = initializeSymbolTable()
