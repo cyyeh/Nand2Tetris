@@ -191,8 +191,6 @@ def main():
         # main algorithm to transfer Hack machine language into binary format and put them into a list
         binaryProgramList = transferHackAssemblyToBinaryCode(assemblyProgramList)
 
-        print(binaryProgramList)
-
         # write binary format program into a file
         writeBinaryProgramToFile(fileName, binaryProgramList)
     else:
