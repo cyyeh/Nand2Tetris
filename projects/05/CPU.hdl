@@ -39,5 +39,30 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    Mux16(a=instruction, b=aluOut, sel=instruction[15], out=muxOut);
+    Mux(a=true, b=instruction[5], sel=instruction[15], out=aRegisterLoad);
+    ARegister(in=muxOut, load=aRegisterLoad, out=ARegisterOut, out[0..14]=addressM);
+    Mux(a=false, b=instruction[4], sel=instruction[15], out=bRegisterLoad);
+    DRegister(in=aluOut, load=bRegisterLoad, out=xIn);
+    Mux16(a=ARegisterOut, b=inM, sel=instruction[12], out=yIn);
+    ALU(x=xIn, y=yIn, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, zr=zr, ng=ng, out[0..15]=aluOut);
+    
+    And(a=instruction[1], b=zr, out=loadIfZero);
+    And(a=instruction[2], b=ng, out=loadIfNegative);
+    Or(a=zr, b=ng, out=zrOrng);
+    Not(in=zrOrng, out=notZrNg);
+    And(a=instruction[0], b=notZrNg, out=loadIfPositive);
+    Or(a=loadIfZero, b=loadIfNegative, out=loadTemp);
+    Or(a=loadTemp, b=loadIfPositive, out=loadPC);
+    Not(in=loadPC, out=notLoadPC);
+    Or(a=noJMP, b=notLoadPC, out=incTemp);
+    Mux(a=true, b=incTemp, sel=instruction[15], out=inc);
+
+    DMux8Way(in=true, sel=instruction[0..2], a=noJMP, b=JGT, c=JEQ, d=JGE, e=JLT, f=JNE, g=JLE, h=JMP);
+    Or(a=loadPC, b=JMP, out=loadTemp2);
+    Mux(a=false, b=loadTemp2, sel=instruction[15], out=load);
+
+    PC(in=ARegisterOut, load=load, inc=inc, reset=reset, out[0..14]=pc, out[15]=false);
+    And(a=instruction[3], b=instruction[15], out=writeMSel);
+    Mux(a=false, b=true, sel=writeMSel, out=writeM);
 }
