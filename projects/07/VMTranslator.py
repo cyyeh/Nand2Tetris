@@ -25,6 +25,9 @@ def parseVMCodeFile(file):
 
 # main algorithm for generating Hack machine language program into a list
 def generateHackMachineLanguage(vmCodeList, fileName):
+    if '/' in fileName:
+        fileName = fileName.split('/')[-1]
+
     # transfer VM add command into Hack machine language code
     def transferAdd(code):
         hackMachineCodeList = []
@@ -289,10 +292,13 @@ def generateHackMachineLanguage(vmCodeList, fileName):
             hackMachineCodeList.append('@SP')
             hackMachineCodeList.append('M=M+1')
         elif 'static' in parsedCode:
-            hackMachineCodeList.append('@' + str(offset))
-            hackMachineCodeList.append('D=A')
             hackMachineCodeList.append('@' + fileName + '.' + str(offset))
+            hackMachineCodeList.append('D=M')
+            hackMachineCodeList.append('@SP')
+            hackMachineCodeList.append('A=M')
             hackMachineCodeList.append('M=D')
+            hackMachineCodeList.append('@SP')
+            hackMachineCodeList.append('M=M+1')            
     
         return hackMachineCodeList
 
@@ -350,8 +356,10 @@ def generateHackMachineLanguage(vmCodeList, fileName):
             hackMachineCodeList.append('@' + accessor)
             hackMachineCodeList.append('M=D')
         elif 'static' in parsedCode:
-            hackMachineCodeList.append('@' + str(offset))
-            hackMachineCodeList.append('D=A')
+            hackMachineCodeList.append('@SP')
+            hackMachineCodeList.append('M=M-1')
+            hackMachineCodeList.append('A=M')
+            hackMachineCodeList.append('D=M')
             hackMachineCodeList.append('@' + fileName + '.' + str(offset))
             hackMachineCodeList.append('M=D')
     
