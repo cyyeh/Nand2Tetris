@@ -291,13 +291,13 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
             hackAssemblyElementList.append('D=A')
             hackAssemblyElementList.append('@' + memorySegmentDict[memorySegmentAccess])
             hackAssemblyElementList.append('D=D+M')
-            hackAssemblyElementList.append('@R13')
+            hackAssemblyElementList.append('@frame')
             hackAssemblyElementList.append('M=D')
             hackAssemblyElementList.append('@SP')
             hackAssemblyElementList.append('M=M-1')
             hackAssemblyElementList.append('A=M')
             hackAssemblyElementList.append('D=M')
-            hackAssemblyElementList.append('@R13')
+            hackAssemblyElementList.append('@frame')
             hackAssemblyElementList.append('A=M')
             hackAssemblyElementList.append('M=D')
         elif 'temp' in parsedCode:
@@ -306,13 +306,13 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
             hackAssemblyElementList.append('D=A')
             hackAssemblyElementList.append('@5')
             hackAssemblyElementList.append('D=D+A')
-            hackAssemblyElementList.append('@R13')
+            hackAssemblyElementList.append('@frame')
             hackAssemblyElementList.append('M=D')
             hackAssemblyElementList.append('@SP')
             hackAssemblyElementList.append('M=M-1')
             hackAssemblyElementList.append('A=M')
             hackAssemblyElementList.append('D=M')
-            hackAssemblyElementList.append('@R13')
+            hackAssemblyElementList.append('@frame')
             hackAssemblyElementList.append('A=M')
             hackAssemblyElementList.append('M=D')
         elif 'pointer' in parsedCode:
@@ -365,7 +365,7 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
             hackAssemblyElementList.append('@' + functionName + '$' + labelName)
         else:
             hackAssemblyElementList.append("@" + labelName)
-        hackAssemblyElementList.append("D;JGT")
+        hackAssemblyElementList.append("D;JNE")
 
         return hackAssemblyElementList
 
@@ -408,19 +408,14 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
         # endFrame = LCL // endFrame is a temporary variable
         hackAssemblyElementList.append("@LCL")
         hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append("@R13")
+        hackAssemblyElementList.append("@frame")
         hackAssemblyElementList.append("M=D")
         # retAddr = *(endFrame - 5) // gets the return address
-        hackAssemblyElementList.append("@R13")
-        hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
+        hackAssemblyElementList.append("@5")
+        hackAssemblyElementList.append('D=D-A')
         hackAssemblyElementList.append('A=D')
         hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append("@R14")
+        hackAssemblyElementList.append("@return")
         hackAssemblyElementList.append("M=D")
         # *ARG = pop()  // repositions the return value for the caller
         hackAssemblyElementList.append("@SP")
@@ -436,45 +431,44 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
         hackAssemblyElementList.append("@SP")
         hackAssemblyElementList.append("M=D")
         # THAT = *(endFrame - 1) // restores THAT of the caller
-        hackAssemblyElementList.append("@R13")
+        hackAssemblyElementList.append("@frame")
         hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append('D=D-1')
+        hackAssemblyElementList.append("@1")
+        hackAssemblyElementList.append('D=D-A')
+        #hackAssemblyElementList.append('D=D-1')
         hackAssemblyElementList.append('A=D')
         hackAssemblyElementList.append("D=M")
         hackAssemblyElementList.append("@THAT")
         hackAssemblyElementList.append("M=D")
         # THIS = *(endFrame - 2) // restores THIS of the caller
-        hackAssemblyElementList.append("@R13")
+        hackAssemblyElementList.append("@frame")
         hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
+        hackAssemblyElementList.append("@2")
+        hackAssemblyElementList.append('D=D-A')        
         hackAssemblyElementList.append('A=D')
         hackAssemblyElementList.append("D=M")
         hackAssemblyElementList.append("@THIS")
         hackAssemblyElementList.append("M=D")
         # ARG = *(endFrame - 3) // restores ARG of the caller
-        hackAssemblyElementList.append("@R13")
+        hackAssemblyElementList.append("@frame")
         hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
+        hackAssemblyElementList.append("@3")
+        hackAssemblyElementList.append('D=D-A')            
         hackAssemblyElementList.append('A=D')
         hackAssemblyElementList.append("D=M")
         hackAssemblyElementList.append("@ARG")
         hackAssemblyElementList.append("M=D")
         # LCL = *(endFrame - 4) // restores LCL of the caller
-        hackAssemblyElementList.append("@R13")
+        hackAssemblyElementList.append("@frame")
         hackAssemblyElementList.append("D=M")
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
+        hackAssemblyElementList.append("@4")
+        hackAssemblyElementList.append('D=D-A')            
         hackAssemblyElementList.append('A=D')
         hackAssemblyElementList.append("D=M")
         hackAssemblyElementList.append("@LCL")
         hackAssemblyElementList.append("M=D")        
         # goto retAddr // goes to return address in the caller's code
-        hackAssemblyElementList.append("@R14")
+        hackAssemblyElementList.append("@return")
         hackAssemblyElementList.append("A=M")
         hackAssemblyElementList.append("0;JMP")
 
@@ -526,15 +520,9 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
         hackAssemblyElementList.append('@SP')
         hackAssemblyElementList.append('M=M+1')
         # ARG = SP - 5 - number of arguments
-        hackAssemblyElementList.append('@SP')
         hackAssemblyElementList.append('D=M')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        hackAssemblyElementList.append('D=D-1')
-        for _ in range(numberOfArguments):
-            hackAssemblyElementList.append('D=D-1')
+        hackAssemblyElementList.append("@" + str(5+numberOfArguments))
+        hackAssemblyElementList.append('D=D-A')    
         hackAssemblyElementList.append('@ARG')
         hackAssemblyElementList.append('M=D')
         # LCL = SP
@@ -613,31 +601,36 @@ def generateHackAssembly(vmCodeList, fileName, addComment, translationHelperData
 
             hackAssemblyElementList += transferFunction(functionName, numberOfVariables)
         elif 'return' == VMCommand:
-            if len(translationHelperData["functionList"]) > 0:
-                translationHelperData["functionList"].pop()
             hackAssemblyElementList += transferReturn()
         elif 'call' == VMCommand:
             parsedCode = code.split(' ')
             functionName = parsedCode[1]
             numberOfArguments = int(parsedCode[-1])
 
-            hackAssemblyElementList = transferCall(functionName, numberOfArguments, str(translationHelperData["functionLabelIndex"]))
+            hackAssemblyElementList += transferCall(functionName, numberOfArguments, str(translationHelperData["functionLabelIndex"]))
             translationHelperData["functionLabelIndex"] += 1
         
         hackAssemblyList += hackAssemblyElementList
 
+    if len(translationHelperData["functionList"]) > 0:
+        translationHelperData["functionList"].pop()
+
     return hackAssemblyList
                     
 # booting code for Hack computer
-def generateBootstrapCode():
+def generateBootstrapCode(addComment):
     hackAssemblyElementList = []
 
     # SP=256
+    if addComment:
+        hackAssemblyElementList.append('//SP=256')
     hackAssemblyElementList.append('@256')
     hackAssemblyElementList.append('D=A')
     hackAssemblyElementList.append('@SP')
     hackAssemblyElementList.append('M=D')
-    # Call Sys.init
+    # call Sys.init
+    if addComment:
+        hackAssemblyElementList.append('//call Sys.init 0')
     # push return address
     hackAssemblyElementList.append('@Bootstrap$ret')
     hackAssemblyElementList.append('D=A')
@@ -681,11 +674,8 @@ def generateBootstrapCode():
     # ARG = SP - 5
     hackAssemblyElementList.append('@SP')
     hackAssemblyElementList.append('D=M')
-    hackAssemblyElementList.append('D=D-1')
-    hackAssemblyElementList.append('D=D-1')
-    hackAssemblyElementList.append('D=D-1')
-    hackAssemblyElementList.append('D=D-1')
-    hackAssemblyElementList.append('D=D-1')
+    hackAssemblyElementList.append('@5')
+    hackAssemblyElementList.append('D=D-A')
     hackAssemblyElementList.append('@ARG')
     hackAssemblyElementList.append('M=D')
     # LCL = SP
@@ -729,7 +719,7 @@ def main():
         else:
             # read each vm code file in a directory
             vmCodeDirectory = sys.argv[1]
-            hackAssemblyList =  generateBootstrapCode()
+            hackAssemblyList =  generateBootstrapCode(addComment)
             
             for fileName in os.listdir(vmCodeDirectory):
                 if fileName.endswith(".vm"):
