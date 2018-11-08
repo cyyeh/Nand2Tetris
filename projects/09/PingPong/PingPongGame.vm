@@ -37,17 +37,18 @@ push this 10
 push this 11
 call PingPongBat.new 4
 pop this 6
-call ScoreBoard.new 0
+push constant 10
+pop this 14
+push this 14
+call ScoreBoard.new 1
 pop this 13
 push constant 0
 not
-pop this 14
-push constant 0
 pop this 15
+push constant 0
+pop this 16
 push constant 6
 call LinkedList.new 1
-pop this 16
-push constant 1
 pop this 17
 push constant 1
 pop this 18
@@ -59,6 +60,9 @@ call Screen.drawLine 4
 pop temp 0
 push this 13
 call ScoreBoard.printScore 1
+pop temp 0
+push this 13
+call ScoreBoard.printGameLevel 1
 pop temp 0
 push pointer 0
 return
@@ -74,7 +78,7 @@ pop temp 0
 push this 13
 call ScoreBoard.dispose 1
 pop temp 0
-push this 16
+push this 17
 call LinkedList.dispose 1
 pop temp 0
 push pointer 0
@@ -105,17 +109,20 @@ pop temp 0
 push this 13
 call ScoreBoard.printScore 1
 pop temp 0
+push this 13
+call ScoreBoard.resetGameLevel 1
+pop temp 0
+push this 13
+call ScoreBoard.printGameLevel 1
+pop temp 0
 push pointer 0
 call PingPongGame.clearPlayAgainMessage 1
 pop temp 0
 push constant 0
 not
-pop this 14
-push constant 0
 pop this 15
-push pointer 0
-call PingPongGame.run 1
-pop temp 0
+push constant 0
+pop this 16
 push constant 0
 return
 function PingPongGame.moveBat 0
@@ -250,10 +257,10 @@ if-goto IF_TRUE4
 goto IF_FALSE4
 label IF_TRUE4
 push constant 0
-pop this 14
+pop this 15
 push constant 0
 not
-pop this 15
+pop this 16
 goto IF_END4
 label IF_FALSE4
 push this 7
@@ -435,10 +442,10 @@ if-goto IF_TRUE15
 goto IF_FALSE15
 label IF_TRUE15
 push constant 0
-pop this 14
+pop this 15
 push constant 0
 not
-pop this 15
+pop this 16
 goto IF_END15
 label IF_FALSE15
 push this 7
@@ -543,10 +550,10 @@ if-goto IF_TRUE20
 goto IF_FALSE20
 label IF_TRUE20
 push constant 0
-pop this 14
+pop this 15
 push constant 0
 not
-pop this 15
+pop this 16
 goto IF_END20
 label IF_FALSE20
 push this 7
@@ -588,7 +595,12 @@ pop temp 0
 label IF_END22
 label IF_END19
 label IF_FALSE18
-push constant 10
+push constant 25
+push constant 2
+push this 13
+call ScoreBoard.getGameLevel 1
+call Math.multiply 2
+sub
 call Sys.wait 1
 pop temp 0
 push constant 0
@@ -721,16 +733,16 @@ push constant 32
 call String.appendChar 2
 call Output.printString 1
 pop temp 0
-push this 17
+push this 18
 call Output.printInt 1
 pop temp 0
-push this 17
+push this 18
 push constant 4
 lt
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
-push this 17
+push this 18
 push constant 1
 eq
 if-goto IF_TRUE1
@@ -757,7 +769,7 @@ call String.appendChar 2
 call Output.printString 1
 pop temp 0
 label IF_FALSE1
-push this 17
+push this 18
 push constant 2
 eq
 if-goto IF_TRUE2
@@ -784,7 +796,7 @@ call String.appendChar 2
 call Output.printString 1
 pop temp 0
 label IF_FALSE2
-push this 17
+push this 18
 push constant 3
 eq
 if-goto IF_TRUE3
@@ -893,7 +905,7 @@ pop local 0
 push constant 0
 not
 pop local 1
-push this 16
+push this 17
 push local 1
 push constant 9
 push constant 28
@@ -907,7 +919,7 @@ pop pointer 0
 push this 13
 call ScoreBoard.getScore 1
 pop local 0
-push this 16
+push this 17
 push local 0
 call LinkedList.addInSorted 2
 pop temp 0
@@ -1059,7 +1071,7 @@ call Output.printString 1
 pop temp 0
 push constant 0
 return
-function PingPongGame.dealWithGameOver 1
+function PingPongGame.dealWithGameOver 2
 push argument 0
 pop pointer 0
 push pointer 0
@@ -1071,8 +1083,8 @@ pop temp 0
 push constant 0
 call String.new 1
 call Keyboard.readInt 1
-pop this 18
-push this 18
+pop local 0
+push local 0
 push constant 1
 eq
 if-goto IF_TRUE0
@@ -1080,13 +1092,13 @@ goto IF_FALSE0
 label IF_TRUE0
 push constant 0
 not
-pop local 0
+pop local 1
 goto IF_END0
 label IF_FALSE0
 push constant 0
-pop local 0
+pop local 1
 label IF_END0
-push local 0
+push local 1
 return
 function PingPongGame.run 3
 push argument 0
@@ -1096,7 +1108,7 @@ pop local 1
 label WHILE_EXP0
 push local 1
 not
-push this 15
+push this 16
 not
 and
 not
@@ -1105,14 +1117,14 @@ label WHILE_EXP1
 push local 0
 push constant 0
 eq
-push this 15
+push this 16
 not
 and
 not
 if-goto WHILE_END1
 call Keyboard.keyPressed 0
 pop local 0
-push this 14
+push this 15
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
@@ -1124,7 +1136,7 @@ pop temp 0
 label IF_FALSE0
 goto WHILE_EXP1
 label WHILE_END1
-push this 14
+push this 15
 if-goto IF_TRUE1
 goto IF_FALSE1
 label IF_TRUE1
@@ -1137,118 +1149,135 @@ pop temp 0
 push this 13
 call ScoreBoard.printScore 1
 pop temp 0
-push local 0
-push constant 132
-eq
+push this 13
+call ScoreBoard.getScore 1
+push constant 10
+push this 13
+call ScoreBoard.getGameLevel 1
+call Math.multiply 2
+gt
 if-goto IF_TRUE2
 goto IF_FALSE2
 label IF_TRUE2
-push constant 1
-pop this 7
+push this 13
+call ScoreBoard.addGameLevelByOne 1
+pop temp 0
+push this 13
+call ScoreBoard.printGameLevel 1
+pop temp 0
 label IF_FALSE2
 push local 0
-push constant 130
+push constant 132
 eq
 if-goto IF_TRUE3
 goto IF_FALSE3
 label IF_TRUE3
-push constant 2
+push constant 1
 pop this 7
 label IF_FALSE3
 push local 0
-push constant 57
+push constant 130
 eq
 if-goto IF_TRUE4
 goto IF_FALSE4
 label IF_TRUE4
-push constant 0
-pop this 14
+push constant 2
+pop this 7
 label IF_FALSE4
 push local 0
-push constant 48
+push constant 57
 eq
 if-goto IF_TRUE5
 goto IF_FALSE5
 label IF_TRUE5
-push pointer 0
-call PingPongGame.restartGame 1
-pop temp 0
+push constant 0
+pop this 15
 label IF_FALSE5
 push local 0
-push constant 140
+push constant 48
 eq
 if-goto IF_TRUE6
 goto IF_FALSE6
 label IF_TRUE6
-push constant 0
-not
-pop local 1
-push constant 0
-pop this 14
+push pointer 0
+call PingPongGame.restartGame 1
+pop temp 0
 label IF_FALSE6
-goto IF_END1
-label IF_FALSE1
 push local 0
-push constant 57
+push constant 140
 eq
 if-goto IF_TRUE7
 goto IF_FALSE7
 label IF_TRUE7
 push constant 0
 not
-pop this 14
+pop local 1
+push constant 0
+pop this 15
 label IF_FALSE7
+goto IF_END1
+label IF_FALSE1
+push local 0
+push constant 57
+eq
+if-goto IF_TRUE8
+goto IF_FALSE8
+label IF_TRUE8
+push constant 0
+not
+pop this 15
+label IF_FALSE8
 label IF_END1
 label WHILE_EXP2
 push local 0
 push constant 0
 eq
 not
-push this 15
+push this 16
 not
 and
 not
 if-goto WHILE_END2
 call Keyboard.keyPressed 0
 pop local 0
-push this 14
-if-goto IF_TRUE8
-goto IF_FALSE8
-label IF_TRUE8
+push this 15
+if-goto IF_TRUE9
+goto IF_FALSE9
+label IF_TRUE9
 push pointer 0
 call PingPongGame.moveBat 1
 pop temp 0
 push pointer 0
 call PingPongGame.updateBallMovement 1
 pop temp 0
-label IF_FALSE8
+label IF_FALSE9
 goto WHILE_EXP2
 label WHILE_END2
-push this 15
-if-goto IF_TRUE9
-goto IF_FALSE9
-label IF_TRUE9
+push this 16
+if-goto IF_TRUE10
+goto IF_FALSE10
+label IF_TRUE10
 push pointer 0
 call PingPongGame.dealWithGameOver 1
 pop local 2
 push local 2
-if-goto IF_TRUE10
-goto IF_FALSE10
-label IF_TRUE10
-push this 17
+if-goto IF_TRUE11
+goto IF_FALSE11
+label IF_TRUE11
+push this 18
 push constant 1
 add
-pop this 17
+pop this 18
 push pointer 0
 call PingPongGame.restartGame 1
 pop temp 0
-goto IF_END10
-label IF_FALSE10
+goto IF_END11
+label IF_FALSE11
 push pointer 0
 call PingPongGame.printGameResult 1
 pop temp 0
-label IF_END10
-label IF_FALSE9
+label IF_END11
+label IF_FALSE10
 goto WHILE_EXP0
 label WHILE_END0
 push constant 0

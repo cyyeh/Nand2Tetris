@@ -13,11 +13,11 @@ class PingPongGame {
     field int batHeight;
     field int gameBoundY; // game bound y position from top left corner
     field ScoreBoard scoreBoard;
+    field int maxGameLevel; // ranging from 1 to 10
     field boolean isGameRunning; 
     field boolean isGameOver;
     field LinkedList topFiveScoresList;
     field int gameNumber;
-    field int playAgain;
 
     /** Constructs a new PingPong Game */
     constructor PingPongGame new() {
@@ -33,15 +33,16 @@ class PingPongGame {
         let batWidth = 50;
         let batHeight = 10;
         let batDirection = 0;
-        let bat = PingPongBat.new(batInitialX, batInitialY, batWidth, batHeight);        
-        let scoreBoard = ScoreBoard.new();
+        let bat = PingPongBat.new(batInitialX, batInitialY, batWidth, batHeight);
+        let maxGameLevel = 10;    
+        let scoreBoard = ScoreBoard.new(maxGameLevel);
         let isGameRunning = true;
         let isGameOver = false;
         let topFiveScoresList = LinkedList.new(6);
         let gameNumber = 1;
-        let playAgain = 1;
         do Screen.drawLine(0, gameBoundY, 510, gameBoundY); // boundary line between score board and ping pong game
         do scoreBoard.printScore();
+        do scoreBoard.printGameLevel();
 
         return this;
     }
@@ -68,11 +69,11 @@ class PingPongGame {
         // initialize score board
         do scoreBoard.resetScore();
         do scoreBoard.printScore();
+        do scoreBoard.resetGameLevel();
+        do scoreBoard.printGameLevel();
         do clearPlayAgainMessage();
         let isGameRunning = true;
         let isGameOver = false;
-
-        do run();      
 
         return;
     }
@@ -190,7 +191,7 @@ class PingPongGame {
             }
         }
 
-        do Sys.wait(10); // delays the next movement
+        do Sys.wait(25 - (2 * scoreBoard.getGameLevel())); // delays the next movement
 
         return;
     }
@@ -267,11 +268,13 @@ class PingPongGame {
     @returns boolean, if play again
     */
     method boolean dealWithGameOver() {
+        var int playAgainMessage;
         var boolean ifPlayAgain;
         do sortTopFiveScores();
         do printPlayAgainMessage();
-        let playAgain = Keyboard.readInt(""); // 1: play again, 0: quit
-        if (playAgain = 1) {
+        let playAgainMessage = Keyboard.readInt(""); // 1: play again, 0: quit
+
+        if (playAgainMessage = 1) {
             let ifPlayAgain = true;
         } else {
             let ifPlayAgain = false;
@@ -286,7 +289,7 @@ class PingPongGame {
     method void run() {
         var char key; // the key pressed by players
         var boolean exit;
-        var boolean playAgain;
+        var boolean ifPlayAgain;
         let exit = false;
 
         while ((~exit) & (~isGameOver)) {
@@ -304,6 +307,11 @@ class PingPongGame {
                 do Sys.wait(5);
                 do scoreBoard.scoreOnePoint();
                 do scoreBoard.printScore();
+
+                if (scoreBoard.getScore() > (10 * scoreBoard.getGameLevel())) {
+                    do scoreBoard.addGameLevelByOne();
+                    do scoreBoard.printGameLevel();
+                }
 
                 if (key = 132) { // right arrow key (bat moves right)
                     let batDirection = 1;
@@ -335,8 +343,8 @@ class PingPongGame {
 
             // deal with game over condition
             if (isGameOver) {
-                let playAgain = dealWithGameOver();
-                if (playAgain) {
+                let ifPlayAgain = dealWithGameOver();
+                if (ifPlayAgain) {
                     let gameNumber = gameNumber + 1;
                     do restartGame();
                 } else {

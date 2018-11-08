@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a game for playing ping pong to hit all blocks. This game is controlled using keyboard.
+This is a game for playing ping pong to hit all blocks. This game is controlled using keyboard. There are 10 levels in total. Let's see how many points you can get! After playing games, you can see your top five score list.
 
 ## Game Control
 

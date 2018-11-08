@@ -1,9 +1,14 @@
 class ScoreBoard {
     field int score;
+    field int gameLevel;
+    field int maxGameLevel;
 
     /** Constructs scores in a new game perspective */
-    constructor ScoreBoard new() {
+    constructor ScoreBoard new(int inputMaxGameLevel) {
         let score = 0;
+        let gameLevel = 1;
+        let maxGameLevel = inputMaxGameLevel;
+
         return this;
     }
 
@@ -18,6 +23,25 @@ class ScoreBoard {
         let score = score + 1;
 
         return;
+    }
+
+    /**
+    Enhance game level by one
+    */
+    method void addGameLevelByOne() {
+        if (gameLevel < maxGameLevel) {
+            let gameLevel = gameLevel + 1;
+        }
+
+        return;
+    }
+
+    /**
+    Retrieve current game level
+    @returns int, game level (ranging from 1 to 10)
+    */
+    method int getGameLevel() {
+        return gameLevel;
     }
 
     /**
@@ -36,13 +60,29 @@ class ScoreBoard {
         do Output.printString("       "); // remove redundant score point from last games
 
         return;
-    }   
+    } 
 
     /** Reset the score board */
     method void resetScore() {
         let score = 0;
-        do printScore();
 
         return;
     }
+
+    /** Print current game level */
+    method void printGameLevel() {
+        do Output.moveCursor(0, 50);    // move cursor to the top right corner of screen
+        do Output.printString("Game Level: ");
+        do Output.printInt(gameLevel);
+        do Output.printString("  "); // remove redundant game level from last games
+
+        return;
+    }
+
+    /** Reset the game level */
+    method void resetGameLevel() {
+        let gameLevel = 1;
+
+        return;
+    }    
 }
