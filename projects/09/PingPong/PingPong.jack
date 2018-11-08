@@ -1,0 +1,147 @@
+class PingPong {
+    field int x, y; // screen location of the ping pong's top-left corner
+    field int radius;   // ping pong's radius, in pixels
+    field int speed;    // ping pong's speed
+    field int boundY;    // game bound y position from top left corner
+
+    /** 
+    Constructs a ping pong with given location, radius and speed 
+    @requires int inputX, coordinate x of the screen
+    @requires int inputY, coordinate y of the screen
+    @requires int inputRadius, radius of pingpong
+    @requires int inputSpeed, speed of pingpong, ranging from 1-5, meaning ping pong moves how many pixels each time
+    @requires int inputBoundY, game bound y position from top left corner
+    */
+    constructor PingPong new(int inputX, int inputY, int inputRadius, int inputSpeed, int inputBoundY) {
+        let x = inputX;
+        let y = inputY;
+        let radius = inputRadius;
+        let speed = inputSpeed;
+        let boundY = inputBoundY;
+        do draw();
+
+        return this;
+    }
+
+    /** Dispose the ping pong */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Draw the ping pong on the screen */
+    method void draw() {
+        do Screen.setColor(true);
+        do Screen.drawCircle(x, y, radius);
+
+        return;
+    }
+
+    /** Erase the ping pong from the screen */
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawCircle(x, y, radius);
+
+        return;
+    }
+
+    /** Move the ping pong up by 1-5 pixels according to speed */
+    method void moveUp() {
+        if ((y - speed) > (boundY + 1)) {
+            do erase();
+            let y = y - speed;
+            do draw();
+        }
+
+        return;
+    }
+
+    /** Move the ping pong down by 1-5 pixels according to speed */
+    method void moveDown() {
+        if ((y + speed) < 250) {
+            do erase();
+            let y = y + speed;
+            do draw();
+        }
+
+        return;
+    }
+
+    /** Move the ping pong top right by 1-5 pixels according to speed */
+    method void moveTopRight() {
+        if (((x + speed) < 510) & ((y - speed) > (boundY + 1))) {
+            do erase();
+            let x = x + speed;
+            let y = y - speed;
+            do draw();
+        }
+
+        return;
+    }       
+
+    /** Move the ping pong top left by 1-5 pixels according to speed */
+    method void moveTopLeft() {
+        if (((x - speed) > radius) & ((y - speed) > (boundY + 1))) {
+            do erase();
+            let x = x - speed;
+            let y = y - speed;
+            do draw();
+        }
+
+        return;
+    }       
+
+    /** Move the ping pong down right by 2-5 pixels according to speed */
+    method void moveDownRight() {
+        if (((x + speed) < 510) & ((y + speed) < 254)) {
+            do erase();
+            let x = x + speed;
+            let y = y + speed;
+            do draw();
+        }
+
+        return;
+    }        
+
+    /** Move the ping pong down left by 1-5 pixels according to speed */
+    method void moveDownLeft() {
+        if (((x - speed) > radius) & ((y + speed) < 254)) {
+            do erase();
+            let x = x - speed;
+            let y = y + speed;
+            do draw();
+        }
+
+        return;
+    }              
+
+    /** 
+    Directly locate the ping pong at (x, y) 
+    @requires int inputX, x coordinate of ping pong
+    @requires int inputY, y coordinate of ping pong
+    */
+    method void locateAt(int inputX, int inputY) {
+        do erase();
+        let x = inputX;
+        let y = inputY;
+        do draw();
+
+        return;
+    }
+
+    /**
+    Retrieve current x coordinate of ping pong
+    @returns int, x coordinate of ping pong
+    */
+    method int getX() {
+        return x;
+    }
+
+    /**
+    Retrieve current y coordinate of ping pong
+    @returns int, y coordinate of ping pong
+    */
+    method int getY() {
+        return y;
+    }    
+}

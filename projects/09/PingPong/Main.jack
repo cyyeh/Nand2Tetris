@@ -1,0 +1,12 @@
+/** Entry point of PingPong Game */
+class Main {
+    function void main() {
+        var PingPongGame game;
+
+        let game = PingPongGame.new();
+        do game.run();
+        do game.dispose();
+
+        return;
+    }
+}

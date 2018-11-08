@@ -1,0 +1,58 @@
+class LinkedListNode {
+    field int data;
+    field LinkedListNode next;
+    field LinkedListNode prev;
+
+    constructor LinkedListNode new(int item, LinkedListNode nextNode, LinkedListNode prevNode) {
+        let data = item;
+        let next = nextNode;
+        let prev = prevNode;
+        return this;
+    }
+
+    /** Retrieve data */
+    method int getData() {
+        return data;
+    }
+
+    /** Retrieve next linked list node */
+    method LinkedListNode getNext() {
+        return next;
+    }
+
+    /** Retrieve prev linked list node */
+    method LinkedListNode getPrev() {
+        return prev;
+    }
+
+    /** Set data */
+    method void setData(int newData) {
+        let data = newData;
+
+        return;
+    }
+
+    /** Set prev linked list node */
+    method void setPrevNode(LinkedListNode prevNode) {
+        let prev = prevNode;
+
+        return;
+    }
+
+    /** Set next linked list node */
+    method void setNextNode(LinkedListNode nextNode) {
+        let next = nextNode;
+
+        return;
+    }
+
+    /** Dispose linked list node */
+    method void dispose() {
+        if (~(next = null)) {
+            do next.dispose();
+        }
+
+        do Memory.deAlloc(this);
+        return;
+    }
+}

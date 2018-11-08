@@ -1,0 +1,22 @@
+/** Test Linked List functionality*/
+class Main {
+    function void main() {
+        var LinkedList list;
+        let list = LinkedList.new(5);
+
+        do list.addInSorted(5);
+        do list.addInSorted(10);
+        do list.addInSorted(20);
+        do list.addInSorted(15);
+        do list.addInSorted(8);
+        do list.addInSorted(26);
+        do list.addInSorted(40);
+        do list.dispose();
+        do Output.printInt(list.getSize());
+        do Output.println();
+        do list.print();
+        do Output.println();
+
+        return;
+    }
+}

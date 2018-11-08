@@ -1,0 +1,269 @@
+function PingPong.new 0
+push constant 5
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 2
+pop this 2
+push argument 3
+pop this 3
+push argument 4
+pop this 4
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+push pointer 0
+return
+function PingPong.dispose 0
+push argument 0
+pop pointer 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function PingPong.draw 0
+push argument 0
+pop pointer 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 2
+call Screen.drawCircle 3
+pop temp 0
+push constant 0
+return
+function PingPong.erase 0
+push argument 0
+pop pointer 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 2
+call Screen.drawCircle 3
+pop temp 0
+push constant 0
+return
+function PingPong.moveUp 0
+push argument 0
+pop pointer 0
+push this 1
+push this 3
+sub
+push this 4
+push constant 1
+add
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push this 1
+push this 3
+sub
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function PingPong.moveDown 0
+push argument 0
+pop pointer 0
+push this 1
+push this 3
+add
+push constant 250
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push this 1
+push this 3
+add
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function PingPong.moveTopRight 0
+push argument 0
+pop pointer 0
+push this 0
+push this 3
+add
+push constant 510
+lt
+push this 1
+push this 3
+sub
+push this 4
+push constant 1
+add
+gt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push this 0
+push this 3
+add
+pop this 0
+push this 1
+push this 3
+sub
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function PingPong.moveTopLeft 0
+push argument 0
+pop pointer 0
+push this 0
+push this 3
+sub
+push this 2
+gt
+push this 1
+push this 3
+sub
+push this 4
+push constant 1
+add
+gt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push this 0
+push this 3
+sub
+pop this 0
+push this 1
+push this 3
+sub
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function PingPong.moveDownRight 0
+push argument 0
+pop pointer 0
+push this 0
+push this 3
+add
+push constant 510
+lt
+push this 1
+push this 3
+add
+push constant 254
+lt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push this 0
+push this 3
+add
+pop this 0
+push this 1
+push this 3
+add
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function PingPong.moveDownLeft 0
+push argument 0
+pop pointer 0
+push this 0
+push this 3
+sub
+push this 2
+gt
+push this 1
+push this 3
+add
+push constant 254
+lt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push this 0
+push this 3
+sub
+pop this 0
+push this 1
+push this 3
+add
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function PingPong.locateAt 0
+push argument 0
+pop pointer 0
+push pointer 0
+call PingPong.erase 1
+pop temp 0
+push argument 1
+pop this 0
+push argument 2
+pop this 1
+push pointer 0
+call PingPong.draw 1
+pop temp 0
+push constant 0
+return
+function PingPong.getX 0
+push argument 0
+pop pointer 0
+push this 0
+return
+function PingPong.getY 0
+push argument 0
+pop pointer 0
+push this 1
+return

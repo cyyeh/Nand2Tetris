@@ -1,0 +1,184 @@
+/** Represents a linked list of integers. */
+class LinkedList {
+    field LinkedListNode firstSentinel;
+    field int size;
+    field int capacity;
+
+    /* Creates a List. */
+    constructor LinkedList new(int limitCapacity) {
+        let firstSentinel = LinkedListNode.new(-1, null, null);
+        let size = 0;
+        let capacity = limitCapacity;
+
+        return this;
+    }
+
+    /** Accessors */
+    method int getData() { return firstSentinel.getData(); }
+    method LinkedListNode getNext() { return firstSentinel.getNext(); }
+    method LinkedListNode getPrev() { return firstSentinel.getPrev(); }
+
+    /** 
+    Retrieve list length 
+    @returns int, linkedlist length
+    */
+    method int getSize() { return size; }
+
+    /**
+    Insert node after current node
+    @requires int newData, new data
+    @requires LinkedListNode current, current node
+    */
+    method void insertAfterCurrent(int newData, LinkedListNode current) {
+        var LinkedListNode newNode;
+        let newNode = LinkedListNode.new(newData, null, current);
+        do current.setNextNode(newNode);
+        let size = size + 1; 
+
+        return;       
+    }
+
+    /**
+    Insert node before current node
+    @requires int newData, new data
+    @requires LinkedListNode current, current node    
+    */
+    method void insertBeforeCurrent(int newData, LinkedListNode current) {
+        var LinkedListNode newNode;
+        var LinkedListNode prevNode;
+        let prevNode = current.getPrev();
+        let newNode = LinkedListNode.new(newData, current, prevNode);
+        do current.setPrevNode(newNode);
+        do prevNode.setNextNode(newNode);
+        let size = size + 1; 
+
+        return;
+    }
+
+    /** 
+    Add data in sorted way (descending order and max number of elements = capacity)
+    @requires int newData
+    */
+    method void addInSorted(int newData) {
+        var LinkedListNode current;
+        var boolean isAdded;
+        var LinkedListNode newNode;
+        var LinkedListNode prevNode;
+        let current = firstSentinel;
+
+        if (~(current.getNext() = null)) { // if first node exists
+            let isAdded = false;
+            let current = current.getNext();
+
+            while ((~isAdded) & (~(current.getNext() = null))) {
+                if (~(newData < current.getData())) {   // check if new data is >= current data
+                    do insertBeforeCurrent(newData, current);
+                    let isAdded = true;
+                }
+                
+                let current = current.getNext();
+            }
+
+            // insert before/after last node
+            if ((~isAdded)) {
+                if (~(newData < current.getData())) { // check if new data is >= last node data
+                    do insertBeforeCurrent(newData, current);                    
+                } else {    
+                    do insertAfterCurrent(newData, current);
+                }
+            }   
+        } else {
+            // insert first data
+            do insertAfterCurrent(newData, current);
+        }
+
+        // remove nodes from linked list if number of elements is beyond the capacity
+        if (size > capacity) {
+            do removeRedundantNodes();
+            let size = capacity;
+        }
+
+        return;
+    }
+
+    /**
+    Remove redundant nodes from linkedlist
+    */
+    method void removeRedundantNodes() {
+        var int index;
+        var LinkedListNode current;
+        let index = 0;
+        let current = firstSentinel.getNext();
+
+        while ((index < (capacity - 1)) & (~(current = null))) {
+            let current = current.getNext();
+            let index = index + 1;
+        }
+
+        if (~(current = null)) {
+            do current.setNextNode(null);
+            do current.dispose();
+        }        
+
+        return;
+    }    
+
+    /** 
+    Print node of the list 
+    @requires boolean ifPrintListOrder, whether to print list order before data 
+    @requires int index, list order index
+    @requires int cursorRow, cursor for Jack OS Output API
+    @requires int cursorColumn, cursor for Jack OS Output API
+    */
+    method void printNode(Boolean ifPrintListOrder, int index, LinkedListNode current, int cursorRow, int cursorColumn) {
+        do Output.moveCursor(cursorRow, cursorColumn);
+        if (ifPrintListOrder) {
+            do Output.printInt(index);
+            do Output.printString(". ");
+        }
+        do Output.printInt(current.getData());
+        do Output.println(); 
+
+        return; 
+    }
+
+
+    /** 
+    Prints this list
+    @requires boolean ifPrintListOrder, whether to print list order before data
+    @requires int cursorRow, cursor for Jack OS Output API
+    @requires int cursorColumn, cursor for Jack OS Output API
+    */
+    method void print(Boolean ifPrintListOrder, int cursorRow, int cursorColumn) {
+        var LinkedListNode current;    // initializes current to the first item
+        var int index;
+        let current = firstSentinel;
+        let index = 1;
+
+        if (~(current.getNext() = null)) {
+            let current = current.getNext();
+        }
+
+        while (~(current.getNext() = null)) {
+            do printNode(ifPrintListOrder, index, current, cursorRow, cursorColumn);
+            let current = current.getNext();
+            let index = index + 1;
+            let cursorRow = cursorRow + 1;
+        }
+
+        // print last node
+        do printNode(ifPrintListOrder, index, current, cursorRow, cursorColumn);
+
+        return;
+    }
+
+    /** Disposes this List by recursively disposing its tail. */
+    method void dispose() {
+        if (~(firstSentinel = null)) {
+            do firstSentinel.dispose();
+        }
+        // Uses an OS routine to recycle this object.
+        do Memory.deAlloc(this);
+        return;
+    }
+}

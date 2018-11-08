@@ -1,0 +1,350 @@
+class PingPongGame {
+    field PingPong ball; 
+    field int ballRadius;
+    field int ballInitialX;
+    field int ballInitialY;
+    field int ballDirection; // the ball's current direction: 1=up, 2=down, 3=up-right, 4=up-left, 5=down-right, 6=down-left
+    field int ballSpeed; // ball speed, ranging from 1 to 5    
+    field PingPongBat bat; 
+    field int batDirection; // the bat's current direction:  0=none, 1=right, 2=left    
+    field int batInitialX;
+    field int batInitialY;
+    field int batWidth;
+    field int batHeight;
+    field int gameBoundY; // game bound y position from top left corner
+    field ScoreBoard scoreBoard;
+    field boolean isGameRunning; 
+    field boolean isGameOver;
+    field LinkedList topFiveScoresList;
+    field int gameNumber;
+    field int playAgain;
+
+    /** Constructs a new PingPong Game */
+    constructor PingPongGame new() {
+        let gameBoundY = 12;
+        let ballDirection = 1;
+        let ballSpeed = 2;
+        let ballRadius = 5;
+        let ballInitialX = 250;
+        let ballInitialY = 238;
+        let ball = PingPong.new(ballInitialX, ballInitialY, ballRadius, ballSpeed, gameBoundY);
+        let batInitialX = 225;
+        let batInitialY = 244;
+        let batWidth = 50;
+        let batHeight = 10;
+        let batDirection = 0;
+        let bat = PingPongBat.new(batInitialX, batInitialY, batWidth, batHeight);        
+        let scoreBoard = ScoreBoard.new();
+        let isGameRunning = true;
+        let isGameOver = false;
+        let topFiveScoresList = LinkedList.new(6);
+        let gameNumber = 1;
+        let playAgain = 1;
+        do Screen.drawLine(0, gameBoundY, 510, gameBoundY); // boundary line between score board and ping pong game
+        do scoreBoard.printScore();
+
+        return this;
+    }
+
+    /** Disposes this game */
+    method void dispose() {
+        do bat.dispose();
+        do ball.dispose();
+        do scoreBoard.dispose();
+        do topFiveScoresList.dispose();
+        do Memory.deAlloc(this);
+
+        return;
+    }
+
+    /** Restart the game */
+    method void restartGame() {
+        // initialize ball's location
+        do ball.locateAt(ballInitialX, ballInitialY);
+        let ballDirection = 1;
+        // initialize bats' location
+        do bat.locateAt(batInitialX, batInitialY);
+        let batDirection = 0;
+        // initialize score board
+        do scoreBoard.resetScore();
+        do scoreBoard.printScore();
+        do clearPlayAgainMessage();
+        let isGameRunning = true;
+        let isGameOver = false;
+
+        do run();      
+
+        return;
+    }
+
+    /** Move bat according to key pressed condition */
+    method void moveBat() {
+        if (batDirection = 1) { do bat.moveRight(); }
+        if (batDirection = 2) { do bat.moveLeft(); }
+        do Sys.wait(5);  // delays the next movement
+
+        return;
+    }
+
+    /** Update ball movement according to its direction and bat's direction */
+    method void updateBallMovement() {
+        var int ballX;
+        var int ballY;
+        var int batX;
+        var int batY;
+        let ballX = ball.getX();
+        let ballY = ball.getY();
+        let batX = bat.getX();
+        let batY = bat.getY();
+
+        if (ballDirection = 1) { // ball moves up
+            if (~((ballY - ballSpeed) > (gameBoundY + ballRadius - 1))) { // check if hit the top side wall
+                let ballDirection = 2;
+            } else {
+                do ball.moveUp();
+            }
+        }
+        if (ballDirection = 2) { // ball moves down
+            if ((~((ballY + ballSpeed) < 250)) | // if ball is going to hit the bottom side wall
+                ((ballX + (2 * ballRadius) > batX) & (ballX < (batX + batWidth)) & (~((ballY + ballSpeed) < 240)))) { // if ball is going to hit the bat
+                if (~((ballX + (2 * ballRadius) > batX) & (ballX < (batX + batWidth)) & (~((ballY + ballSpeed) < 240)))) {
+                    let isGameRunning = false;
+                    let isGameOver = true;
+                } else {
+                    if (batDirection = 0) {
+                        let ballDirection = 1;
+                    } else {
+                        if (batDirection = 1) {
+                            let ballDirection = 3;
+                        } else {
+                            let ballDirection = 4;
+                        }
+                    }
+                }
+            } else {
+                do ball.moveDown();
+            }
+        }
+        if (ballDirection = 3) { // ball moves top-right
+            if (~((ballY - ballSpeed) > (gameBoundY + ballRadius - 1))) {   // check if hit the top side wall
+                let ballDirection = 5;
+            } else {
+                if (~((ballX + ballRadius - 1) < 510)) { // check if hit the right side wall
+                    let ballDirection = 4;
+                } else {
+                    do ball.moveTopRight();
+                }
+            }
+        }
+        if (ballDirection = 4) { // ball moves top-left
+            if (~((ballY - ballSpeed) > (gameBoundY + ballRadius - 1))) {   // check if hit the top side wall
+                let ballDirection = 6;
+            } else {
+                if (~((ballX - ballSpeed) > ballRadius)) { // check if hit the left side wall
+                    let ballDirection = 3;
+                } else {
+                    do ball.moveTopLeft();
+                }
+            }
+        }
+        if (ballDirection = 5) { // ball moves down-right
+            if ((~((ballY + ballSpeed) < 250)) | // if ball is going to hit the bottom side wall
+                ((ballX + (2 * ballRadius) > batX) & (ballX < (batX + batWidth)) & (~((ballY + ballSpeed) < 240)))) { // if ball is going to hit the bat
+                if (~((ballX + (2 * ballRadius) > batX) & (ballX < (batX + batWidth)) & (~((ballY + ballSpeed) < 240)))) {
+                    let isGameRunning = false;
+                    let isGameOver = true;
+                } else {
+                    if (batDirection = 0 | batDirection = 1) {  // bat is stopped or moving right
+                        let ballDirection = 3;
+                    } else {    // bat is moving left
+                        let ballDirection = 1;
+                    }
+                }
+            } else {
+                if (~((ballX + ballRadius - 1) < 510)) { // check if hit the right side wall
+                    let ballDirection = 6;
+                } else {
+                    do ball.moveDownRight();
+                }
+            }
+        }
+        if (ballDirection = 6) { // ball moves down-left
+            if ((~((ballY + ballSpeed) < 250)) | // if ball is going to hit the bottom side wall
+                ((ballX + (2 * ballRadius) > batX) & (ballX < (batX + batWidth)) & (~((ballY + ballSpeed) < 240)))) { // if ball is going to hit the bat
+                if (~((ballX + (2 * ballRadius) > batX) & (ballX < (batX + batWidth)) & (~((ballY + ballSpeed) < 240)))) {
+                    let isGameRunning = false;
+                    let isGameOver = true;
+                } else {
+                    if (batDirection = 0 | batDirection = 2) { // bat is stopped or moving left
+                        let ballDirection = 4;
+                    } else {    // bat is moving right
+                        let ballDirection = 1;
+                    }
+                }
+            } else {
+                if (~((ballX - ballSpeed) > ballRadius)) { // check if hit the left side wall
+                    let ballDirection = 5;
+                } else {
+                    do ball.moveDownLeft();
+                }                
+            }
+        }
+
+        do Sys.wait(10); // delays the next movement
+
+        return;
+    }
+
+    /** Print game result */
+    method void printGameResult() {
+        var int index;
+        var boolean ifPrintListOrder;
+
+        do clearPlayAgainMessage();
+        do Output.moveCursor(4, 26); // move cursor to the center of screen
+        do Output.printString("Game Over!");
+        do Output.moveCursor(5, 20); // move cursor to the center of screen
+        do Output.printString("Your Score is ");
+        do Output.printInt(scoreBoard.getScore());
+        do Output.printString(" Points!");
+        do Output.moveCursor(6, 20); // move cursor to the center of screen
+        do Output.printString("This is your ");
+        do Output.printInt(gameNumber);
+        if (gameNumber < 4) {
+            if (gameNumber = 1) {
+                do Output.printString("st game.");
+            } 
+            if (gameNumber = 2) {
+                do Output.printString("nd game.");
+            }
+            if (gameNumber = 3) {
+                do Output.printString("rd game.");
+            }
+        } else {
+            do Output.printString("th game.");
+        }
+
+        do Output.moveCursor(7, 20);
+        do Output.println();
+        do Output.moveCursor(8, 20);
+        do Output.printString("Top Five Score List:");
+        let index = 0;
+        let ifPrintListOrder = true;
+        do topFiveScoresList.print(ifPrintListOrder, 9, 28);
+        
+        return;
+    }
+
+    /** Sort top five game results */
+    method void sortTopFiveScores() {
+        var int currentScore;
+        let currentScore = scoreBoard.getScore();
+
+        // add current score and sort the game results
+        do topFiveScoresList.addInSorted(currentScore);
+
+        return;
+    }
+
+    /** Print play again message */
+    method void printPlayAgainMessage() {
+        do Output.moveCursor(4, 15);
+        do Output.printString("Play Again? 1: True, 0: False");
+
+        return;
+    }
+
+    /** Clear play again message */
+    method void clearPlayAgainMessage() {
+        do Output.moveCursor(4, 15);
+        do Output.printString("                               ");
+
+        return;        
+    }
+
+    /** 
+    Deal with game over condition 
+    @returns boolean, if play again
+    */
+    method boolean dealWithGameOver() {
+        var boolean ifPlayAgain;
+        do sortTopFiveScores();
+        do printPlayAgainMessage();
+        let playAgain = Keyboard.readInt(""); // 1: play again, 0: quit
+        if (playAgain = 1) {
+            let ifPlayAgain = true;
+        } else {
+            let ifPlayAgain = false;
+        }
+
+        return ifPlayAgain;
+    }
+
+    /** 
+    Run the game: handles the users' inputs and moves the bats accordingly 
+    */
+    method void run() {
+        var char key; // the key pressed by players
+        var boolean exit;
+        var boolean playAgain;
+        let exit = false;
+
+        while ((~exit) & (~isGameOver)) {
+            // waits for a key to be pressed
+            while ((key = 0) & (~isGameOver)) {
+                let key = Keyboard.keyPressed();
+                if (isGameRunning) {
+                    let batDirection = 0;
+                    do updateBallMovement();
+                }                
+            }
+
+            if (isGameRunning) {
+                // update score board
+                do Sys.wait(5);
+                do scoreBoard.scoreOnePoint();
+                do scoreBoard.printScore();
+
+                if (key = 132) { // right arrow key (bat moves right)
+                    let batDirection = 1;
+                } 
+                if (key = 130) { // left arrow key (bat moves left)
+                    let batDirection = 2;
+                } 
+                if (key = 57) { let isGameRunning = false; } // 9 key (pause)
+                if (key = 48) { // 0 key (restart the game)
+                    do restartGame();
+                }
+
+                if (key = 140) { // ESC key (exit the game)
+                    let exit = true; 
+                    let isGameRunning = false;
+                }
+            } else {
+                if (key = 57) { let isGameRunning = true; } // 9 key (continue the game)
+            }
+
+            // waits for a key to be released
+            while ((~(key = 0)) & (~isGameOver)) {
+                let key = Keyboard.keyPressed();
+                if (isGameRunning) {
+                    do moveBat();
+                    do updateBallMovement();
+                }                     
+            }
+
+            // deal with game over condition
+            if (isGameOver) {
+                let playAgain = dealWithGameOver();
+                if (playAgain) {
+                    let gameNumber = gameNumber + 1;
+                    do restartGame();
+                } else {
+                    do printGameResult();
+                }
+            }
+        }
+
+        return;
+    }
+}

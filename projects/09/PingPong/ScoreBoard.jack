@@ -1,0 +1,48 @@
+class ScoreBoard {
+    field int score;
+
+    /** Constructs scores in a new game perspective */
+    constructor ScoreBoard new() {
+        let score = 0;
+        return this;
+    }
+
+   /** Disposes score board */
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }    
+
+    /** Scores one point */
+    method void scoreOnePoint() {
+        let score = score + 1;
+
+        return;
+    }
+
+    /**
+    Retrieve score points
+    @returns int, score
+    */
+    method int getScore() {
+        return score;
+    }
+
+    /** Print current score board */
+    method void printScore() {
+        do Output.moveCursor(0, 0); // move cursor to the top left corner of screen
+        do Output.printString("Score: ");
+        do Output.printInt(score);
+        do Output.printString("       "); // remove redundant score point from last games
+
+        return;
+    }   
+
+    /** Reset the score board */
+    method void resetScore() {
+        let score = 0;
+        do printScore();
+
+        return;
+    }
+}

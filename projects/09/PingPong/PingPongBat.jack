@@ -1,0 +1,98 @@
+class PingPongBat {
+    field int x, y; // screen location of the ping pong bat's top-left corner
+    field int width;  // ping pong bat's width, in pixels
+    field int height; // ping pong bat's height, in pixels
+    
+    /**
+    Constructs a ping pong bat with given location, size
+    @requires, int inputX, x coordinate of ping pong bat
+    @requires, int inputY, y coordinate of ping pong bat
+    @requires, int inputWidth, width of ping pong bat(in pixels)
+    @requires, int inputHeight, height of ping pong bat(in pixels)
+    */
+    constructor PingPongBat new(int inputX, int inputY, int inputWidth, int inputHeight) {
+        let x = inputX;
+        let y = inputY;
+        let width = inputWidth;
+        let height = inputHeight;
+        do draw();
+        return this;
+    }
+
+    /** Dispose the ping pong bat*/
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Draw the ping pong bat on the screen */
+    method void draw() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + width, y + height);
+
+        return;
+    }
+
+    /** Erase the ping pong bat from the screen */
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        
+        return;
+    }
+
+    /** Move the ping pong bat right by 2 pixels */
+    method void moveRight() {
+        if (x < 459) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle(x, y, x + 2, y + height);
+            let x = x + 2;
+            do Screen.setColor(true);
+            do Screen.drawRectangle(x + width - 2, y, x + width, y + height);
+        }
+
+        return;
+    }
+
+    /** Move the ping pong bat left by 2 pixels */
+    method void moveLeft() {
+      if (x > 1) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle(x + width - 2, y, x + width, y + height);
+         let x = x - 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle(x, y, x + 2, y + height);
+      }
+      return;
+    }          
+
+    /** 
+    Directly locate the ping pong bat at (x, y) 
+    @requires int inputX, x coordinate of ping pong bat
+    @requires int inputY, y coordinate of ping pong bat
+    */
+    method void locateAt(int inputX, int inputY) {
+        do erase();
+        let x = inputX;
+        let y = inputY;
+        do draw();
+
+        return;
+    }
+
+    /**
+    Retrieve current x coordinate of ping pong bat
+    @returns int, x coordinate of ping pong bat
+    */
+    method int getX() {
+        return x;
+    }
+
+    /**
+    Retrieve current y coordinate of ping pong bat
+    @returns int, y coordinate of ping pong bat
+    */
+    method int getY() {
+        return y;
+    }        
+}

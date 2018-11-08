@@ -1,0 +1,337 @@
+function LinkedList.new 0
+push constant 3
+call Memory.alloc 1
+pop pointer 0
+push constant 1
+neg
+push constant 0
+push constant 0
+call LinkedListNode.new 3
+pop this 0
+push constant 0
+pop this 1
+push argument 0
+pop this 2
+push pointer 0
+return
+function LinkedList.getData 0
+push argument 0
+pop pointer 0
+push this 0
+call LinkedListNode.getData 1
+return
+function LinkedList.getNext 0
+push argument 0
+pop pointer 0
+push this 0
+call LinkedListNode.getNext 1
+return
+function LinkedList.getPrev 0
+push argument 0
+pop pointer 0
+push this 0
+call LinkedListNode.getPrev 1
+return
+function LinkedList.getSize 0
+push argument 0
+pop pointer 0
+push this 1
+return
+function LinkedList.insertAfterCurrent 1
+push argument 0
+pop pointer 0
+push argument 1
+push constant 0
+push argument 2
+call LinkedListNode.new 3
+pop local 0
+push argument 2
+push local 0
+call LinkedListNode.setNextNode 2
+pop temp 0
+push this 1
+push constant 1
+add
+pop this 1
+push constant 0
+return
+function LinkedList.insertBeforeCurrent 2
+push argument 0
+pop pointer 0
+push argument 2
+call LinkedListNode.getPrev 1
+pop local 1
+push argument 1
+push argument 2
+push local 1
+call LinkedListNode.new 3
+pop local 0
+push argument 2
+push local 0
+call LinkedListNode.setPrevNode 2
+pop temp 0
+push local 1
+push local 0
+call LinkedListNode.setNextNode 2
+pop temp 0
+push this 1
+push constant 1
+add
+pop this 1
+push constant 0
+return
+function LinkedList.addInSorted 4
+push argument 0
+pop pointer 0
+push this 0
+pop local 0
+push local 0
+call LinkedListNode.getNext 1
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+pop local 1
+push local 0
+call LinkedListNode.getNext 1
+pop local 0
+label WHILE_EXP0
+push local 1
+not
+push local 0
+call LinkedListNode.getNext 1
+push constant 0
+eq
+not
+and
+not
+if-goto WHILE_END0
+push argument 1
+push local 0
+call LinkedListNode.getData 1
+lt
+not
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push pointer 0
+push argument 1
+push local 0
+call LinkedList.insertBeforeCurrent 3
+pop temp 0
+push constant 0
+not
+pop local 1
+label IF_FALSE1
+push local 0
+call LinkedListNode.getNext 1
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+not
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push argument 1
+push local 0
+call LinkedListNode.getData 1
+lt
+not
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push pointer 0
+push argument 1
+push local 0
+call LinkedList.insertBeforeCurrent 3
+pop temp 0
+goto IF_END3
+label IF_FALSE3
+push pointer 0
+push argument 1
+push local 0
+call LinkedList.insertAfterCurrent 3
+pop temp 0
+label IF_END3
+label IF_FALSE2
+goto IF_END0
+label IF_FALSE0
+push pointer 0
+push argument 1
+push local 0
+call LinkedList.insertAfterCurrent 3
+pop temp 0
+label IF_END0
+push this 1
+push this 2
+gt
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push pointer 0
+call LinkedList.removeRedundantNodes 1
+pop temp 0
+push this 2
+pop this 1
+label IF_FALSE4
+push constant 0
+return
+function LinkedList.removeRedundantNodes 2
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+push this 0
+call LinkedListNode.getNext 1
+pop local 1
+label WHILE_EXP0
+push local 0
+push this 2
+push constant 1
+sub
+lt
+push local 1
+push constant 0
+eq
+not
+and
+not
+if-goto WHILE_END0
+push local 1
+call LinkedListNode.getNext 1
+pop local 1
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 1
+push constant 0
+call LinkedListNode.setNextNode 2
+pop temp 0
+push local 1
+call LinkedListNode.dispose 1
+pop temp 0
+label IF_FALSE0
+push constant 0
+return
+function LinkedList.printNode 0
+push argument 0
+pop pointer 0
+push argument 4
+push argument 5
+call Output.moveCursor 2
+pop temp 0
+push argument 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 2
+call Output.printInt 1
+pop temp 0
+push constant 2
+call String.new 1
+push constant 46
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+label IF_FALSE0
+push argument 3
+call LinkedListNode.getData 1
+call Output.printInt 1
+pop temp 0
+call Output.println 0
+pop temp 0
+push constant 0
+return
+function LinkedList.print 2
+push argument 0
+pop pointer 0
+push this 0
+pop local 0
+push constant 1
+pop local 1
+push local 0
+call LinkedListNode.getNext 1
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+call LinkedListNode.getNext 1
+pop local 0
+label IF_FALSE0
+label WHILE_EXP0
+push local 0
+call LinkedListNode.getNext 1
+push constant 0
+eq
+not
+not
+if-goto WHILE_END0
+push pointer 0
+push argument 1
+push local 1
+push local 0
+push argument 2
+push argument 3
+call LinkedList.printNode 6
+pop temp 0
+push local 0
+call LinkedListNode.getNext 1
+pop local 0
+push local 1
+push constant 1
+add
+pop local 1
+push argument 2
+push constant 1
+add
+pop argument 2
+goto WHILE_EXP0
+label WHILE_END0
+push pointer 0
+push argument 1
+push local 1
+push local 0
+push argument 2
+push argument 3
+call LinkedList.printNode 6
+pop temp 0
+push constant 0
+return
+function LinkedList.dispose 0
+push argument 0
+pop pointer 0
+push this 0
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 0
+call LinkedListNode.dispose 1
+pop temp 0
+label IF_FALSE0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
