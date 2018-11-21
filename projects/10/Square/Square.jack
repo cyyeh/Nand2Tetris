@@ -4,7 +4,6 @@
 // File name: projects/10/Square/Square.jack
 
 // (same as projects/09/Square/Square.jack)
-
 /** Implements a graphical square. */
 class Square {
 
