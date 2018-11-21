@@ -13,9 +13,9 @@ from CompilationEngine import CompilationEngine
 
 def generateXMLFile(inputList, jackCodeFileName, option = "parsed"):
     if option == "tokenized":
-        outputFileName = jackCodeFileName.replace(".jack", "T_cy.xml")
+        outputFileName = jackCodeFileName.replace(".jack", "T.xml")
     else:
-        outputFileName = jackCodeFileName.replace(".jack", "_cy.xml")
+        outputFileName = jackCodeFileName.replace(".jack", ".xml")
 
     with open(outputFileName, mode="w") as f:
         for line in inputList:
@@ -42,7 +42,7 @@ def main():
             jackTokenizedList = JackTokenizer(fileName, TOKEN_DICTIONARY).generateTokens()
             tokenizedFileName = generateXMLFile(jackTokenizedList, fileName, "tokenized")
             jackParsedList = CompilationEngine(tokenizedFileName, TOKEN_DICTIONARY).parseTokens()
-            #generateXMLFile(jackParsedList, fileName, "parsed")
+            generateXMLFile(jackParsedList, fileName, "parsed")
         else:
             # a directory containing jack files
             jackCodeDirectory = sys.argv[1]
@@ -53,7 +53,7 @@ def main():
                     jackTokenizedList = JackTokenizer(fileName, TOKEN_DICTIONARY).generateTokens()
                     tokenizedFileName = generateXMLFile(jackTokenizedList, fileName, "tokenized")
                     jackParsedList = CompilationEngine(tokenizedFileName, TOKEN_DICTIONARY).parseTokens()
-                    #generateXMLFile(jackParsedList, fileName, "parsed")
+                    generateXMLFile(jackParsedList, fileName, "parsed")
     else:
         print("Usage: python JackAnalyzer.py [JackCodeFile].jack or python JackAnalyzer.py [JackCodeDirectory]")
 

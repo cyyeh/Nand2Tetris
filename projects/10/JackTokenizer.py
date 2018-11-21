@@ -81,7 +81,14 @@ class JackTokenizer:
                     elif currentCode:
                         tokenizedList.append("<identifier> " + currentCode + " </identifier>")
                     currentCode = ""
-                    tokenizedList.append("<symbol> " + char + " </symbol>")
+                    if char == "<":
+                        tokenizedList.append("<symbol> &lt; </symbol>")
+                    elif char == ">":
+                        tokenizedList.append("<symbol> &gt; </symbol>")
+                    elif char == "&":
+                        tokenizedList.append("<symbol> &amp; </symbol>")
+                    else:  
+                        tokenizedList.append("<symbol> " + char + " </symbol>")
                 else:
                     if char == "\"":
                         if not stringTag:
@@ -94,7 +101,14 @@ class JackTokenizer:
                     tokenizedList.append("<keyword> " + currentCode + " </keyword>")
                     currentCode = ""
                 elif currentCode in self.TOKEN_DICTIONARY["symbol"]:
-                    tokenizedList.append("<symbol> " + currentCode + " </symbol>")
+                    if currentCode == "<":
+                        tokenizedList.append("<symbol> &lt; </symbol>")
+                    elif currentCode == ">":
+                        tokenizedList.append("<symbol> &gt; </symbol>")
+                    elif char == "&":
+                        tokenizedList.append("<symbol> &amp; </symbol>")
+                    else:  
+                        tokenizedList.append("<symbol> " + currentCode + " </symbol>")
                     currentCode = ""
                 elif currentCode.isdigit() and int(currentCode) in self.TOKEN_DICTIONARY["integerConstant"]:
                     tokenizedList.append("<integerConstant> " + currentCode + " </integerConstant>")
